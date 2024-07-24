@@ -11,6 +11,7 @@ class ExternalUserController {
 
     @GetMapping
     fun getExternalUser(): ExternalUser {
+
         return ExternalUser("external-grace", 20)
     }
 
