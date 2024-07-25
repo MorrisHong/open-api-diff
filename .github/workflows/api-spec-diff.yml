@@ -48,6 +48,12 @@ jobs:
           echo "Compare branch API spec content:"
           cat api-specs/compare-openapi.json || echo "File not found"
 
+      - name: Running OpenAPI Spec diff action
+        uses: oasdiff/oasdiff-action/changelog@main
+        with:
+          base: api-specs/base-openapi.json
+          revision: api-specs/compare-openapi.json
+
       - name: Upload API specs as artifact
         uses: actions/upload-artifact@v4
         with:
