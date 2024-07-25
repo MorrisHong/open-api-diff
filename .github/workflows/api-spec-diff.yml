@@ -51,5 +51,5 @@ jobs:
       - name: Upload API specs as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: docs
-          path: docs/
+          name: api-specs
+          path: api-specs/
