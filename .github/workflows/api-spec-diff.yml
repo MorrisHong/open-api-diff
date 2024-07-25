@@ -26,6 +26,10 @@ jobs:
         with:
           distribution: corretto
           java-version: 17
+          
+      - name: Get base branch name
+        id: get_base_branch
+        run: echo "::set-output name=branch::${{ github.base_ref }}"
 
       - name: Generate base branch API spec
         run: |
