@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+
+name: API Spec Diff
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  generate-api-spec-diff: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+          
+      # 쿼리파이 레포에 적용시 아래 step 시도.
+      # - name: Checkout repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     token: ${{ secrets.DEV_CHEQUER_GITHUB_TOKEN }}
+      #     submodules: true
+      #     lfs: true
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 17
+
+      - name: Generate base branch API spec
+        run: |
+          git checkout ${{ github.base_ref }}
+          ./gradlew generateOpenApiDocs
+          mv docs/openapi.json base-openapi.json
+
+      - name: Generate compare branch API spec
+        run: |
+          git checkout ${{ github.head_ref }}
+          ./gradlew generateOpenApiDocs
+          mv docs/openapi.json compare-openapi.json
+      
