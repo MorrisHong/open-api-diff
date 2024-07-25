@@ -42,4 +42,9 @@ jobs:
           git checkout ${{ github.head_ref }}
           ./gradlew generateOpenApiDocs
           mv docs/openapi.json compare-openapi.json
-      
+
+      - name: Upload API specs as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: docs/
