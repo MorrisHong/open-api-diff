@@ -53,6 +53,7 @@ jobs:
         with:
           base: api-specs/base-openapi.json
           revision: api-specs/compare-openapi.json
+          output-to-file: 'changelog.md'
 
       - name: Upload API specs as artifact
         uses: actions/upload-artifact@v4
