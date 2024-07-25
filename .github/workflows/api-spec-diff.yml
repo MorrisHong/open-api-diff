@@ -27,14 +27,9 @@ jobs:
           distribution: corretto
           java-version: 17
 
-      # - name: Get base branch name
-      #   id: get_base_branch
-      #   run: echo "::set-output name=branch::${{ github.base_ref }}"
-
       - name: Generate base branch API spec
         run: |
           echo ${{ github.base_ref }}
-          echo ${{ github.head_ref }}
           git fetch origin ${{ github.base_ref }}
           git checkout ${{ github.base_ref }}
           ./gradlew generateOpenApiDocs
@@ -42,6 +37,8 @@ jobs:
 
       - name: Generate compare branch API spec
         run: |
+          echo ${{ github.head_ref }}
+          git fetch origin ${{ github.head_ref }}
           git checkout ${{ github.head_ref }}
           ./gradlew generateOpenApiDocs
           mv docs/openapi.json compare-openapi.json
