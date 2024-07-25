@@ -41,7 +41,7 @@ dependencies {
 
 openApi {
     apiDocsUrl.set("http://localhost:8080/api/docs/specification")
-    outputDir.set(file("$projectDir/docs"))
+    outputDir.set(file("$projectDir/api-specs"))
     outputFileName.set("openapi.json")
 }
 
