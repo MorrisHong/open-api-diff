@@ -32,16 +32,21 @@ jobs:
           echo ${{ github.base_ref }}
           git fetch origin ${{ github.base_ref }}
           git checkout ${{ github.base_ref }}
-          ./gradlew generateOpenApiDocs
-          mv docs/openapi.json base-openapi.json
+          ./gradlew generateOpenApiDocs --stacktrace
+          mkdir -p api-specs
+          find . -name "openapi.json" -exec cp {} api-specs/base-openapi.json \;
+          echo "Base branch API spec content:"
+          cat api-specs/base-openapi.json || echo "File not found"
 
       - name: Generate compare branch API spec
         run: |
           echo ${{ github.head_ref }}
           git fetch origin ${{ github.head_ref }}
           git checkout ${{ github.head_ref }}
-          ./gradlew generateOpenApiDocs
-          mv docs/openapi.json compare-openapi.json
+          ./gradlew generateOpenApiDocs --stacktrace
+          find . -name "openapi.json" -exec cp {} api-specs/compare-openapi.json \;
+          echo "Compare branch API spec content:"
+          cat api-specs/compare-openapi.json || echo "File not found"
 
       - name: Upload API specs as artifact
         uses: actions/upload-artifact@v2
