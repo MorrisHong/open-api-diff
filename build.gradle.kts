@@ -36,7 +36,7 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.2.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.22")
+//    implementation("io.swagger.parser.v3:swagger-parser:2.1.22")
 
 }
 
