@@ -91,11 +91,11 @@ jobs:
             			"fields": [
             				{
             					"type": "mrkdwn",
-            					"text": "Base branch : ${{ github.base.ref }}"
+            					"text": "Base branch : ${{ github.base_ref }}"
             				},
             				{
             					"type": "mrkdwn",
-            					"text": "Compare branch : ${{ github.ref }}"
+            					"text": "Compare branch : ${{ github.head_ref }}"
             				}
             			]
             		},
