@@ -3,8 +3,11 @@
 name: Generate and Push OpenAPI Docs
 
 on:
-  pull_request:
-    types: [opened, reopend, synchronize]
+  push:
+    branches:
+      - 'feature/**'
+      - 'release/**'
+      - 'develop'
 
 jobs:
   generate-api-spec-diff: 
@@ -12,14 +15,6 @@ jobs:
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v3
-          
-      # 쿼리파이 레포에 적용시 아래 step 시도.
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3
-      #   with:
-      #     token: ${{ secrets.DEV_CHEQUER_GITHUB_TOKEN }}
-      #     submodules: true
-      #     lfs: true
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -27,92 +22,35 @@ jobs:
           distribution: corretto
           java-version: 17
 
-      - name: Generate base branch API spec
-        run: |
-          echo ${{ github.base_ref }}
-          git fetch origin ${{ github.base_ref }}
-          git checkout ${{ github.base_ref }}
-          ./gradlew generateOpenApiDocs --stacktrace
-          mkdir -p api-specs
-          find . -name "openapi.json" -exec cp {} api-specs/base-openapi.json \;
-          echo "Base branch API spec content:"
-          cat api-specs/base-openapi.json || echo "File not found"
-
-      - name: Generate compare branch API spec
+      - name: Generate OpenAPI docs
         run: |
           echo ${{ github.head_ref }}
           git fetch origin ${{ github.head_ref }}
           git checkout ${{ github.head_ref }}
-          ./gradlew generateOpenApiDocs --stacktrace
-          find . -name "openapi.json" -exec cp {} api-specs/compare-openapi.json \;
-          echo "Compare branch API spec content:"
-          cat api-specs/compare-openapi.json || echo "File not found"
+          ./gradlew generateOpenApiDocs
 
-      - name: Running OpenAPI Spec diff action
-        uses: oasdiff/oasdiff-action/changelog@main
+      - name: Get branch name
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Get current date and time
+        id: datetime
+        run: echo "DATETIME=$(date +'%Y%m%d_%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Checkout target repo
+        uses: actions/checkout@v3
         with:
-          base: api-specs/base-openapi.json
-          revision: api-specs/compare-openapi.json
-          output-to-file: api-specs/changelog.md
+          repository: 'MorrisHong/open-api-specs'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: 'specs'
 
-      - name: Check for API changes
-        id: check_api_changes
+      - name: Copy generated docs to target repo
         run: |
-          if [ -s "api-specs/changelog.md" ]; then
-            echo "::set-output name=changes_exist::true
-          else
-            echo "::set-output name=changes_exist::false
-          fi
-
-      - name: Upload API specs as artifact
-        if: steps.check_api_changes.outputs.changes_exist == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-specs
-          path: api-specs/
-
-      - name: Send Slack notification
-        if: steps.check_api_changes.outputs.changes_exist == 'true'
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: 'C07DCQVK223'
-          payload: |
-            {
-            	"blocks": [
-            		{
-            			"type": "section",
-            			"text": {
-            				"type": "mrkdwn",
-            				"text": "API 변경사항이 감지되었습니다. Workflow run 에 가셔서 Artifacts 를 확인해주세요."
-            			}
-            		},
-                {
-            			"type": "section",
-            			"fields": [
-            				{
-            					"type": "mrkdwn",
-            					"text": "Base branch : ${{ github.base_ref }}"
-            				},
-            				{
-            					"type": "mrkdwn",
-            					"text": "Compare branch : ${{ github.head_ref }}"
-            				}
-            			]
-            		},
-                {
-                    "type": "actions",
-                      "elements": [
-                        {
-                          "type": "button",
-                          "text": {
-                            "type": "plain_text",
-                            "text": "Goto github workflow run"
-                          },
-                          "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                        }
-                      ]
-                }
-            	]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          mkdir -p specs/$BRANCH_NAME
+          cp ./openapi.json specs/$BRANCH_NAME/openapi_${{ steps.datetime.outputs.DATETIME }}.json
+          cd specs
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Update OpenAPI docs for $BRANCH_NAME on ${{ steps.datetime.outputs.DATETIME }}"
+          git push
