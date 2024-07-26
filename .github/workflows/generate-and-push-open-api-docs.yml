@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Upload API Spec 
+name: Generate and Push OpenAPI Docs
 
 on:
   pull_request:
