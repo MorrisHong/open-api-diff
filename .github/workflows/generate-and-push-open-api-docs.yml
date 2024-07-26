@@ -43,6 +43,7 @@ jobs:
           repository: 'MorrisHong/open-api-specs'
           token: ${{ secrets.GITHUB_TOKEN }}
           path: 'specs'
+          ref: 'main'
 
       - name: Copy generated docs to target repo
         run: |
