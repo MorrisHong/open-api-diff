@@ -75,6 +75,7 @@ jobs:
         if: steps.check_api_changes.outputs.changes_exist == 'true'
         uses: slackapi/slack-github-action@v1.26.0
         with:
+          channel-id: 'C07DCQVK223'
           payload: |
             {
             	"blocks": [
