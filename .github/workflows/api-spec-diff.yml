@@ -55,8 +55,63 @@ jobs:
           revision: api-specs/compare-openapi.json
           output-to-file: api-specs/changelog.md
 
+      - name: Check for API changes
+        id: check_api_changes
+        run: |
+          if [ -s "api-specs/changelog.md" ]; then
+            echo "::set-output name=changes_exist::true
+          else
+            echo "::set-output name=changes_exist::false
+          fi
+
       - name: Upload API specs as artifact
+        if: steps.check_api_changes.outputs.changes_exist == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: api-specs
           path: api-specs/
+
+      - name: Send Slack notification
+        if: steps.check_api_changes.outputs.changes_exist == 'true'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+            	"blocks": [
+            		{
+            			"type": "section",
+            			"text": {
+            				"type": "mrkdwn",
+            				"text": "API 변경사항이 감지되었습니다. Workflow run 에 가셔서 Artifacts 를 확인해주세요."
+            			}
+            		},
+                {
+            			"type": "section",
+            			"fields": [
+            				{
+            					"type": "mrkdwn",
+            					"text": "Base branch : ${{ github.base.ref }}"
+            				},
+            				{
+            					"type": "mrkdwn",
+            					"text": "Compare branch : ${{ github.ref }}"
+            				}
+            			]
+            		},
+                {
+                    "type": "actions",
+                      "elements": [
+                        {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "Goto github workflow run"
+                          },
+                          "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                        }
+                      ]
+                }
+            	]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
