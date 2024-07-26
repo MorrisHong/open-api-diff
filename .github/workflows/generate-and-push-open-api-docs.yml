@@ -44,6 +44,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: 'specs'
           ref: 'main'
+        env:
+          ACTIONS_STEP_DEBUG: true
 
       - name: Copy generated docs to target repo
         run: |
