@@ -45,6 +45,7 @@ openApi {
     outputFileName.set("openapi.json")
 }
 
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
