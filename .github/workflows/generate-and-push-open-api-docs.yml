@@ -37,10 +37,17 @@ jobs:
         id: datetime
         run: echo "DATETIME=$(date +'%Y%m%d_%H%M')" >> $GITHUB_OUTPUT
 
+      - name: Checkout target repo
+        uses: actions/checkout@v3
+        with:
+          repository: 'MorrisHong/open-api-specs'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: 'specs'
+
       - name: Copy generated docs to target repo
         run: |
           mkdir -p specs/$BRANCH_NAME
-          cp ${{ github.workspace }}/openapi.json specs/$BRANCH_NAME/openapi_${{ steps.datetime.outputs.DATETIME }}.json
+          cp api-specs/openapi.json specs/$BRANCH_NAME/openapi_${{ steps.datetime.outputs.DATETIME }}.json
           cd specs
           git config user.name github-actions
           git config user.email github-actions@github.com
