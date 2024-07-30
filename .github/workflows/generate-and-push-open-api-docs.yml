@@ -10,7 +10,7 @@ on:
       - 'fix/**'
       - 'develop'
     paths:
-      - '**/interfaces/**
+      - '**/interfaces/**'
 
 jobs:
   generate-api-spec-diff: 
