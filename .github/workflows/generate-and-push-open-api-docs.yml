@@ -7,7 +7,10 @@ on:
     branches:
       - 'feature/**'
       - 'release/**'
+      - 'fix/**'
       - 'develop'
+    paths:
+      - '**/interfaces/**
 
 jobs:
   generate-api-spec-diff: 
@@ -39,7 +42,7 @@ jobs:
 
       - name: Generate token
         id: generate_token
-        uses: tibdex/github-app-token@v1
+        uses: tibdex/github-app-token@v2
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
