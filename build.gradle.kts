@@ -36,20 +36,23 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.2.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.22")
+
 }
 
 openApi {
     apiDocsUrl.set("http://localhost:8080/api/docs/specification")
     outputDir.set(file("$projectDir/api-specs"))
     outputFileName.set("openapi.json")
+
 }
+
 
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
+
 
 tasks.withType<Test> {
     useJUnitPlatform()
