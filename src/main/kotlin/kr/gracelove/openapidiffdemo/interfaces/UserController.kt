@@ -1,4 +1,4 @@
-package kr.gracelove.openapidiffdemo.`interface`
+package kr.gracelove.openapidiffdemo.interfaces
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -6,23 +6,22 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/external/users")
-class ExternalUserController {
+@RequestMapping("/api/users")
+class UserController {
 
     @GetMapping
-    fun getExternalUser(): ExternalUser {
-
-        return ExternalUser("external-grace", 20)
+    fun getUser(): User {
+        return User("grace", 20)
     }
 
     @PostMapping
-    fun createExternalUser(user: ExternalUser): ExternalUser {
+    fun createUser(user: User): User {
         return user
     }
 
-    data class ExternalUser(
+
+    data class User(
         val name: String,
         val age: Int
     )
-
 }

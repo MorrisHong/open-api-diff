@@ -8,4 +8,5 @@ class OpenApiDiffDemoApplication
 
 fun main(args: Array<String>) {
     runApplication<OpenApiDiffDemoApplication>(*args)
+
 }
