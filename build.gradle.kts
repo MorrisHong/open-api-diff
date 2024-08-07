@@ -21,6 +21,7 @@ java {
 
 repositories {
     mavenCentral()
+
 }
 
 dependencies {
