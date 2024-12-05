@@ -2,6 +2,7 @@ package kr.gracelove.openapidiffdemo.`interface`
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -19,9 +20,15 @@ class UserController {
         return user
     }
 
+    @PutMapping
+    fun updateUser(user: User): User {
+        return user
+    }
+
 
     data class User(
         val name: String,
-        val age: Int
+        val age: Int,
+        val email: String? = null
     )
 }
